@@ -65,6 +65,47 @@ export function inicializarDelegacionClick() {
           document.getElementById("resumenEstado").textContent = estado === "ATENDIDA" ? "La cita ha sido atendida" : "No asistió";
           document.getElementById("resumenPago").textContent = "Pago generado: $" + (celda.dataset.pago || "0");
 
+          // === Mostrar pagos asociados ===
+          const tablaPagosBody = document.querySelector("#tablaPagosResumen tbody");
+          tablaPagosBody.innerHTML = ""; // Limpiar antes de llenar
+
+          try {
+            const token = localStorage.getItem("accessToken");
+            const resp = await fetch(`http://localhost:8082/secretaria/citas/${idCita}`, {
+              headers: { "Authorization": "Bearer " + token },
+            });
+
+            if (resp.ok) {
+              const citaDetallada = await resp.json();
+              const pagos = citaDetallada.pagos || [];
+
+              if (pagos.length > 0) {
+                pagos.forEach(pago => {
+                  const fila = document.createElement("tr");
+                  fila.innerHTML = `
+          <td>${pago.tipoPago || "-"}</td>
+          <td>$${pago.montoTotal?.toFixed(2) || "0.00"}</td>
+          <td>${new Date(pago.fecha).toLocaleString()}</td>
+          <td>${pago.motivo || "-"}</td>
+        `;
+                  tablaPagosBody.appendChild(fila);
+                });
+              } else {
+                tablaPagosBody.innerHTML = `
+        <tr><td colspan="4" style="text-align:center;">No hay pagos registrados</td></tr>
+      `;
+              }
+            } else {
+              tablaPagosBody.innerHTML = `
+      <tr><td colspan="4" style="text-align:center;">Error al cargar pagos</td></tr>
+    `;
+            }
+          } catch (error) {
+            console.error("Error al obtener pagos:", error);
+            tablaPagosBody.innerHTML = `
+    <tr><td colspan="4" style="text-align:center;">No se pudieron cargar los pagos</td></tr>
+  `;
+          }
 
 
         } else {
