@@ -36,6 +36,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
         try {
+            datos.comisionClinica = 0;
+            datos.tipoPago = form.tipoPago.value;
+
             // 1️⃣ Registrar el pago
             const resp = await fetch("http://localhost:8082/pagos", {
                 method: "POST",
@@ -54,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             // 2️⃣ Cambiar estado de la cita a ATENDIDA
-            const actualizarEstado = await fetch(`http://localhost:8082/citas/${idCita}/estado?estado=ATENDIDA`, {
+            const actualizarEstado = await fetch(`http://localhost:8082/secretaria/citas/${idCita}/estado?estado=ATENDIDA`, {
                 method: "PUT",
                 headers: { "Authorization": "Bearer " + token }
             });
