@@ -36,7 +36,6 @@ export function inicializarDelegacionClick() {
     resetearModal(form, btnGuardarCita, btnIrPagos, btnCerrar);
   });
 
-  // 🔹 Cerrar modal al hacer clic fuera
   modal.addEventListener("click", (e) => {
     if (e.target === modal) {
       modal.style.display = "none";
@@ -44,6 +43,7 @@ export function inicializarDelegacionClick() {
     }
   });
 
+  // ✅ Aquí corregido
   nuevo.addEventListener("click", async (e) => {
     const celda = e.target.closest("td[data-consultorio]");
     if (!celda) return;
@@ -53,8 +53,6 @@ export function inicializarDelegacionClick() {
     const hora = celda.parentElement.cells[0].textContent.trim();
     const fecha = document.getElementById("inputFechaCalendario").value;
     const formContainer = document.getElementById("formContainer");
-
-    modal.style.display = "flex";
 
     try {
       await cargarListas();
@@ -78,7 +76,6 @@ export function inicializarDelegacionClick() {
         document.getElementById("paciente").value = celda.dataset.pacienteId || "";
         document.getElementById("estado").value = estadoOriginal;
 
-        // 🔹 Reset visual
         form.querySelectorAll("input, select, textarea").forEach(campo => campo.disabled = false);
         btnGuardarCita.style.display = "inline-block";
         btnIrPagos.style.display = "none";
@@ -93,10 +90,19 @@ export function inicializarDelegacionClick() {
           btnCerrar.style.margin = "0 auto";
           btnIrPagos.style.display = "inline-block";
           btnIrPagos.textContent = "Ver pago";
-          btnIrPagos.onclick = () => {
+
+          // ✅ Aquí NO abrimos el modal si presionan "Ver pago"
+          btnIrPagos.onclick = (ev) => {
+            ev.stopPropagation();
+            modal.style.display = "none"; // por si está abierto
             window.location.href = `/dashboard-pagos/pagos.html?idCita=${idCita}&modo=ver`;
           };
-        } else if (estadoOriginal === "NO_ASISTIO") {
+
+          // ✅ Aquí sí abrimos el modal para visualizar los datos
+          modal.style.display = "flex";
+        }
+
+        else if (estadoOriginal === "NO_ASISTIO") {
           form.querySelectorAll("input, select, textarea").forEach(campo => campo.disabled = true);
           btnGuardarCita.style.display = "none";
           btnCerrar.textContent = "Cerrar";
@@ -109,34 +115,40 @@ export function inicializarDelegacionClick() {
               headers: { Authorization: "Bearer " + token },
             });
             const pagos = await resp.json();
-
             const yaTienePenalizacion = pagos.some(p => p.tipoPago === "PENALIZACION");
 
             if (yaTienePenalizacion) {
               btnIrPagos.textContent = "Ver penalización";
-              btnIrPagos.onclick = () => {
+              btnIrPagos.onclick = (ev) => {
+                ev.stopPropagation();
+                modal.style.display = "none"; // ✅ prevenir que se vea el modal
                 window.location.href = `/dashboard-pagos/pagos.html?idCita=${idCita}&modo=ver`;
               };
             } else {
               btnIrPagos.textContent = "Registrar penalización";
-              btnIrPagos.onclick = () => {
+              btnIrPagos.onclick = (ev) => {
+                ev.stopPropagation();
+                modal.style.display = "none"; // ✅ prevenir que se vea el modal
                 window.location.href = `/dashboard-pagos/pagos.html?idCita=${idCita}&modo=penalizacion`;
               };
             }
+
+            // ✅ Solo abrimos el modal si no hay penalización registrada (para mostrar cita)
+            modal.style.display = "flex";
+
           } catch (err) {
             console.error("Error al verificar penalización:", err);
           }
         }
 
 
-
-
-
+        modal.style.display = "flex";
       } else {
         formContainer.style.display = "block";
         document.getElementById("idCita").value = "";
         btnGuardarCita.textContent = "Guardar";
         document.getElementById("estadoContainer").style.display = "none";
+        modal.style.display = "flex";
       }
 
     } catch (err) {
@@ -145,6 +157,7 @@ export function inicializarDelegacionClick() {
     }
   });
 }
+
 
 function resetearModal(form, btnGuardarCita, btnIrPagos, btnCerrar) {
   form.querySelectorAll("input, select, textarea").forEach(campo => campo.disabled = false);

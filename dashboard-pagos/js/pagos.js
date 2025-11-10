@@ -81,24 +81,33 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Mostrar el modal solo si vienes con una cita (modo registro)
     if (idCita) {
+        ajustarCamposSegunModo(form, modo);
 
         if (modo === "penalizacion") {
-            form.montoTotal.value = 200; // o el monto que definas
+            form.montoTotal.value = 200;
             form.motivo.value = "Penalización por inasistencia";
             form.penalizacion.value = 200;
-            form.penalizacion.disabled = false; // visible para revisión
-        } else if (modo !== "ver") {
+            form.penalizacion.disabled = false;
+            modal.style.display = "block"; // ✅ solo mostrar en penalización
+        }
+        else if (modo !== "ver") {
+            // Registro normal de pago
             form.montoTotal.value = 500;
             form.motivo.value = "Cita atendida";
+            modal.style.display = "block"; // ✅ solo mostrar en registro
         }
-        ajustarCamposSegunModo(form, modo);
-        modal.style.display = "block";
-
-    } else {
-        // En modo ver o al abrir pagos.html sin parámetros, ocultamos todo
+        else {
+            // ✅ Si es modo ver → NO mostrar el modal
+            modal.style.display = "none";
+            form.style.display = "none";
+        }
+    }
+    else {
+        // Si no hay cita, no mostrar nada
         modal.style.display = "none";
         form.style.display = "none";
     }
+
 
 
     // Botón cancelar
