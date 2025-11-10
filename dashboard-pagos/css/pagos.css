@@ -16,11 +16,14 @@ body {
 .navbar {
   display: flex;
   justify-content: space-between;
-  align-items: center; /* centra verticalmente */
-  background-color: #44749d; /* azul principal */
+  align-items: center;
+  /* centra verticalmente */
+  background-color: #44749d;
+  /* azul principal */
   color: white;
-  padding: 15px 30px; /* mismo grosor que otras ventanas */
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  padding: 15px 30px;
+  /* mismo grosor que otras ventanas */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .navbar h1 {
@@ -32,13 +35,15 @@ body {
   list-style: none;
   display: flex;
   gap: 15px;
-  align-items: center; /* centra los links verticalmente */
+  align-items: center;
+  /* centra los links verticalmente */
 }
 
 .navbar a {
   color: white;
   text-decoration: none;
-  padding: 6px 12px; /* mismo tamaño que otras ventanas */
+  padding: 6px 12px;
+  /* mismo tamaño que otras ventanas */
   border-radius: 4px;
   font-weight: 500;
   font-size: 1rem;
@@ -46,7 +51,8 @@ body {
 }
 
 .navbar a:hover {
-  background-color: #5a82aa; /* mismo hover que otras ventanas */
+  background-color: #5a82aa;
+  /* mismo hover que otras ventanas */
   color: white;
 }
 
@@ -71,10 +77,13 @@ body {
 
 /* ===== Main content ===== */
 .content {
-  max-width: 900px;
+  max-width: 1600px;
+  /* más ancho para tablas grandes */
   margin: 20px auto;
-  padding: 0 15px;
+  padding: 0 30px;
+  /* más espacio a los lados */
 }
+
 
 .section-header {
   display: flex;
@@ -104,57 +113,117 @@ body {
   background-color: #5a82aa;
 }
 
+
+#listaPagos tr:hover {
+  background-color: #d9e3ee;
+  transition: background-color 0.25s ease-in-out;
+}
+
+/* Columna de observaciones: más espacio */
+#listaPagos td:nth-child(9) {
+  max-width: 350px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 /* ===== Lista de pagos ===== */
 #listaPagos {
   background-color: #ebe7e0;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 40px;
+  /* más espacio general */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  /* más ancho */
+  max-width: none;
+  /* permite que quepa toda la tabla */
+  margin: 0 auto;
+  /* centrado */
 }
 
 #listaPagos h3 {
   color: #44749d;
-  font-size: 1.5rem;
-  margin-bottom: 15px;
+  font-size: 2rem;
+  margin-bottom: 30px;
   text-align: center;
+  font-weight: 700;
 }
 
+/* Tabla más grande y legible */
 #listaPagos table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  font-size: 17px;
   table-layout: fixed;
+  /* ajusta columnas según ancho total */
 }
 
 #listaPagos th,
 #listaPagos td {
   border: 1px solid #bdb8ad;
-  padding: 10px;
+  padding: 18px 16px;
   text-align: left;
-  word-wrap: break-word;
-  font-size: 14px;
+  vertical-align: top;
+  /* alineación superior para textos largos */
+  line-height: 1.6;
+  word-break: break-word;
 }
 
+/* Encabezados */
 #listaPagos th {
   background-color: #44749d;
   color: white;
   text-transform: uppercase;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
+/* Filas */
 #listaPagos tr:nth-child(even) {
   background-color: #ffffff;
 }
 
-#listaPagos tr:hover {
-  background-color: #c6d4e1;
+#listaPagos tr:nth-child(odd) {
+  background-color: #f4f4f4;
 }
 
-#listaPagos td:nth-child(9) {
-  /* Observaciones */
-  max-width: 200px;
-  white-space: pre-wrap;
+#listaPagos tr:hover {
+  background-color: #d8e3f0;
+  transition: background-color 0.3s;
 }
+
+/* Ajuste especial por columna */
+#listaPagos td:nth-child(1),
+#listaPagos td:nth-child(2),
+#listaPagos td:nth-child(3),
+#listaPagos td:nth-child(4),
+#listaPagos td:nth-child(5) {
+  width: 120px;
+}
+
+#listaPagos td:nth-child(6),
+#listaPagos td:nth-child(7),
+#listaPagos td:nth-child(8) {
+  width: 140px;
+}
+
+/* Observaciones grandes */
+#listaPagos td:nth-child(9) {
+  width: 400px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.6;
+}
+
+/* Bordes redondeados */
+#listaPagos table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+
 
 /* ===== Modal general ===== */
 .modal {
@@ -240,11 +309,22 @@ textarea {
   background-color: #d32f2f;
 }
 
+.campo {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.campo.oculto {
+  display: none !important;
+}
+
+
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);

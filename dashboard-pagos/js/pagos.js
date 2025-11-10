@@ -8,37 +8,67 @@ document.addEventListener("DOMContentLoaded", async () => {
     const listaPagos = document.getElementById("listaPagos");
     const btnCancelar = document.getElementById("btnCancelar");
 
-    function ajustarCamposSegunModo(form, modo) {
-        const campoComision = form.querySelector("[name='comisionClinica']").closest(".campo");
-        const campoTipoPago = form.querySelector("[name='tipoPago']").closest(".campo");
-        const campoPenalizacion = form.querySelector("[name='penalizacion']").closest(".campo");
-        const campoMonto = form.querySelector("[name='montoTotal']").closest(".campo");
-        const campoMotivo = form.querySelector("[name='motivo']").closest(".campo");
-        const campoObs = form.querySelector("[name='observaciones']").closest(".campo");
+function ajustarCamposSegunModo(form, modo) {
+    const campoComision = form.querySelector("[name='comisionClinica']").closest(".campo");
+    const campoTipoPago = form.querySelector("[name='tipoPago']").closest(".campo");
+    const campoPenalizacion = form.querySelector("[name='penalizacion']").closest(".campo");
+    const campoMonto = form.querySelector("[name='montoTotal']").closest(".campo");
+    const campoMotivo = form.querySelector("[name='motivo']").closest(".campo");
+    const campoObs = form.querySelector("[name='observaciones']").closest(".campo");
+    const tipoPagoSelect = form.querySelector("[name='tipoPago']");
+    const comisionInput = form.querySelector("[name='comisionClinica']");
 
-        if (modo === "penalizacion") {
-            campoMonto.style.display = "block";
-            campoMotivo.style.display = "block";
-            campoObs.style.display = "block";
-            campoPenalizacion.style.display = "block";
+    // ✅ Si no hay modo, lo tratamos como "registro" por defecto
+    modo = (modo || "registro").toLowerCase();
 
-            campoComision.style.display = "none";
-            campoTipoPago.style.display = "none";
+    if (modo === "penalizacion") {
+        // Mostrar solo estos
+        campoMonto.classList.remove("oculto");
+        campoMotivo.classList.remove("oculto");
+        campoObs.classList.remove("oculto");
 
-            form.querySelector("[name='tipoPago']").removeAttribute("required");
-            form.querySelector("[name='comisionClinica']").removeAttribute("required");
-        } else {
-            campoMonto.style.display = "block";
-            campoMotivo.style.display = "block";
-            campoObs.style.display = "block";
-            campoPenalizacion.style.display = "block";
-            campoComision.style.display = "block";
-            campoTipoPago.style.display = "block";
+        // Ocultar los demás
+        campoComision.classList.add("oculto");
+        campoTipoPago.classList.add("oculto");
+        campoPenalizacion.classList.add("oculto");
 
-            form.querySelector("[name='tipoPago']").setAttribute("required", "true");
-            form.querySelector("[name='comisionClinica']").setAttribute("required", "true");
-        }
+        // Quitar required de los ocultos
+        tipoPagoSelect.removeAttribute("required");
+        comisionInput.removeAttribute("required");
+
+        // Fijar valores
+        tipoPagoSelect.value = "PENALIZACION";
+        comisionInput.value = 0;
+    } 
+    else if (modo === "atendida") {
+        // Mostrar estos
+        campoMonto.classList.remove("oculto");
+        campoComision.classList.remove("oculto");
+        campoMotivo.classList.remove("oculto");
+        campoTipoPago.classList.remove("oculto");
+        campoObs.classList.remove("oculto");
+
+        // Ocultar penalización
+        campoPenalizacion.classList.add("oculto");
+
+        // Restaurar required
+        tipoPagoSelect.setAttribute("required", "true");
+        comisionInput.setAttribute("required", "true");
+
+        tipoPagoSelect.value = "";
+    } 
+    else {
+        // Fallback
+        campoComision.classList.remove("oculto");
+        campoTipoPago.classList.remove("oculto");
+        campoPenalizacion.classList.add("oculto");
+        tipoPagoSelect.setAttribute("required", "true");
+        comisionInput.setAttribute("required", "true");
     }
+}
+
+
+
 
 
     const token = localStorage.getItem("accessToken");
@@ -54,7 +84,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Mostrar el modal solo si vienes con una cita (modo registro)
     if (idCita) {
-        modal.style.display = "block";
 
         if (modo === "penalizacion") {
             form.montoTotal.value = 200; // o el monto que definas
@@ -66,6 +95,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             form.motivo.value = "Cita atendida";
         }
         ajustarCamposSegunModo(form, modo);
+        modal.style.display = "block";
 
     } else {
         // En modo ver o al abrir pagos.html sin parámetros, ocultamos todo
