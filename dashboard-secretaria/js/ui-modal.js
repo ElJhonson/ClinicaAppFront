@@ -29,32 +29,47 @@ export function mostrarModalCita(cita) {
   const form = document.getElementById("formRegistrarCita");
   const btnActualizar = document.getElementById("btnActualizarCita");
   const btnCancelar = document.getElementById("cancelarRegistrarCita");
+  const btnIrPagos = document.getElementById("btnIrPagos"); // 🔹 nuevo
+  const estadoContainer = document.getElementById("estadoContainer");
 
   modal.style.display = "block";
 
-  // Rellenar los campos con los datos de la cita
+  // Rellenar campos
   form.elements["idCita"].value = cita.id;
   form.elements["fecha"].value = cita.fecha;
   form.elements["hora"].value = cita.hora;
   form.elements["estado"].value = cita.estado;
-  // ... (otros campos)
+
+  // Mostrar el selector de estado si existe
+  estadoContainer.style.display = "block";
 
   // --- Nueva lógica ---
-  if (cita.estado === "ATENDIDA") {
-    // Desactivar todos los campos del formulario
+  if (cita.estado === "ATENDIDA" || cita.estado === "CANCELADA") {
+    // Desactivar todos los campos
     Array.from(form.elements).forEach((el) => (el.disabled = true));
 
     // Ocultar botón de actualizar
     btnActualizar.style.display = "none";
 
-    // Cambiar texto del botón cancelar a "Cerrar"
+    // Cambiar texto del botón cancelar
     btnCancelar.textContent = "Cerrar";
     btnCancelar.disabled = false;
-  } else {
-    // Si la cita no está atendida, mantener comportamiento normal
-    Array.from(form.elements).forEach((el) => (el.disabled = false));
 
+    // 🔹 Mostrar botón de pagos
+    btnIrPagos.style.display = "inline-block";
+
+    // 🔹 Configurar evento de navegación a la pantalla de pagos
+    btnIrPagos.onclick = () => {
+      const idCita = cita.id;
+      window.location.href = `/dashboard-secretaria/pagos.html?idCita=${idCita}`;
+    };
+  } else {
+    // Si la cita no está atendida ni cancelada
+    Array.from(form.elements).forEach((el) => (el.disabled = false));
     btnActualizar.style.display = "inline-block";
     btnCancelar.textContent = "Cancelar";
+
+    // 🔹 Ocultar botón de pagos
+    btnIrPagos.style.display = "none";
   }
 }

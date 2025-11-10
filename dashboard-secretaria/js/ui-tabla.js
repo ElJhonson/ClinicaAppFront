@@ -110,8 +110,9 @@ export function inicializarDelegacionClick() {
         // --- Acción del botón de pago ---
         btnIrPagos.onclick = () => {
           const idCitaActual = document.getElementById("idCita").value;
-          window.location.href = `/dashboard-pagos/pagos.html?idCita=${idCitaActual}`;
+          window.location.href = `/dashboard-pagos/pagos.html?idCita=${idCitaActual}&modo=ver`;
         };
+
       } else {
         // --- Nueva cita ---
         formContainer.style.display = "block";

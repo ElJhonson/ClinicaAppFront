@@ -3,19 +3,35 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagos de cita</title>
     <link rel="stylesheet" href="./css/pagos.css">
 </head>
 
 <body>
-    <h1>Pagos de la cita</h1>
+    <!-- ===== Navbar ===== -->
+    <header class="navbar">
+        <div class="header-left">
+            <h1>Gestión de pagos</h1>
+        </div>
+        <nav class="header-right">
+            <ul>
+                <li><a href="../dashboar-paciente/paciente.html" class="btn-nav">Pacientes</a></li>
+                <li><a href="../dashboard-psicologo/psicologos.html" class="btn-nav">Psicólogos</a></li>
+                <li><a href="#" id="btnSalir" class="btn-nav btn-logout">Inicio</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <!-- NUEVO: Mostrar info de paciente y psicólogo -->
-    <div id="infoCita" style="margin-bottom: 20px; font-weight: bold;"></div>
+    <main class="content">
+        <!-- Info de la cita -->
+        <div id="infoCita" style="margin-bottom: 20px; font-weight: bold;"></div>
 
-    <div id="listaPagos"></div>
+        <!-- Lista de pagos -->
+        <div id="listaPagos"></div>
+    </main>
 
-    <!-- Modal -->
+    <!-- ===== Modal Registrar Pago ===== -->
     <div id="modalPago" class="modal">
         <div class="modal-content">
             <h2>Registrar pago</h2>
@@ -23,8 +39,11 @@
                 <label>Monto total:</label>
                 <input type="number" name="montoTotal" required>
 
+                <label>Comisión clínica:</label>
+                <input type="number" name="comisionClinica" value="0" required>
+
                 <label>Penalización:</label>
-                <input type="number" name="penalizacion" value="0">
+                <input type="number" name="penalizacion" value="0" disabled>
 
                 <label>Motivo:</label>
                 <input type="text" name="motivo">
@@ -38,7 +57,6 @@
                     <option value="NO_DETERMINADO">No determinado</option>
                 </select>
 
-
                 <label>Observaciones:</label>
                 <textarea name="observaciones"></textarea>
 
@@ -51,6 +69,14 @@
     </div>
 
     <script src="./js/pagos.js"></script>
+<script>
+    // Botón “Inicio” que regresa al dashboard
+    const btnSalir = document.getElementById('btnSalir');
+    btnSalir?.addEventListener('click', () => {
+        window.location.href = "../dashboard-secretaria/home-secretaria.html";
+    });
+</script>
+
 </body>
 
 </html>

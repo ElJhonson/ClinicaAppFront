@@ -27,6 +27,8 @@ loginForm.addEventListener('submit', async (e) => {
     localStorage.setItem("refreshToken", data.refreshToken);
 
     window.location.href = "/dashboard-secretaria/home-secretaria.html"; 
+    console.log(accessToken);
+
   } catch (err) {
     errorMessage.style.display = "block";
       errorMessage.innerText = "Credenciales inválidas ❌";

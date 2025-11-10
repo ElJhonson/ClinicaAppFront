@@ -6,6 +6,7 @@ import { cargarCitas } from "./api-secretaria.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const token = localStorage.getItem("accessToken");
+  
   if (!token) {
     window.location.href = "../index.html";
     return;
@@ -23,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   inicializarDelegacionClick();
   inicializarModal();
   await cargarCitas(token, formatearFechaISO(fechaActual));
-
+  
   // === Botones ===
   document.getElementById("btnSalir").addEventListener("click", () => {
     localStorage.removeItem("accessToken");
