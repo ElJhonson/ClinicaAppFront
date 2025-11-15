@@ -86,10 +86,34 @@
                 </select>
             </div>
 
-            <div class="filtros-botones">
-                <button id="btnRestablecerPagos" class="btn-filtrar reset">Restablecer</button>
-                <button id="btnBuscarPagos" class="btn-filtrar">Buscar</button>
+            <div class="filtro">
+                <label for="filtroMotivo">Motivo:</label>
+                <select id="filtroMotivo">
+                    <option value="">Todos</option>
+                    <option value="Cita atendida">Cita atendida</option>
+                    <option value="Penalización por inasistencia">Penalización por inasistencia</option>
+                </select>
             </div>
+
+
+<div class="filtros-botones">
+    <button id="btnRestablecerPagos" class="btn-filtrar reset">Restablecer</button>
+    <button id="btnReportePagos" class="btn-filtrar buscar">Generar reporte</button>
+
+    <!-- Modal de Reporte -->
+<div id="modalFormato" class="modal oculto">
+    <div class="modal-contenido">
+        <h3>Selecciona el formato del reporte</h3>
+
+        <button id="btnPdf">PDF</button>
+        <button id="btnExcel">Excel</button>
+        <button id="btnCerrarModal">Cancelar</button>
+    </div>
+</div>
+
+</div>
+
+
 
         </div>
 
@@ -100,12 +124,17 @@
         <div id="listaPagos" class="table-container">
             <p>Cargando pagos...</p>
         </div>
+        <div class="total-box">
+            <span class="amount" id="totalPagos">$0.00</span>
+        </div>
+
+
 
     </main>
 
     <!-- ===== MODAL ===== -->
     <div id="modalPago" class="modal">
-        <div class="modal-content">
+        <div class="modal-contenido">
             <h2>Registrar pago</h2>
             <form id="formPago">
 
@@ -154,7 +183,9 @@
     </div>
 
     <script src="./js/pagos.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script>
         const btnSalir = document.getElementById('btnSalir');
         btnSalir?.addEventListener('click', () => {

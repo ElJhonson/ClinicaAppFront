@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return texto.toLowerCase().replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase());
     }
 
-    function normalizarHora(h) { return h ? h.substring(0,5) : ""; }
+    function normalizarHora(h) { return h ? h.substring(0, 5) : ""; }
 
     // =======================
     // 🔄 Cargar filtros iniciales
@@ -61,6 +61,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await cargarFiltrosIniciales();
 
+    function actualizarTotal(pagos) {
+        const total = pagos.reduce((acc, p) => acc + (p.montoTotal || 0), 0);
+        document.getElementById("totalPagos").textContent =
+            "Total: $" + total.toFixed(2);
+    }
+
+
     // =======================
     // 🎨 Ajuste de Campos según modo
     // =======================
@@ -69,7 +76,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const campoTipoPago = form.querySelector("[name='tipoPago']").closest(".campo");
         const campoPenalizacion = form.querySelector("[name='penalizacion']").closest(".campo");
         const campoMonto = form.querySelector("[name='montoTotal']").closest(".campo");
-        const campoMotivo = form.querySelector("[name='motivo']").closest(".campo");
+        const campoMotivo = form.querySelector("[name='m    otivo']").closest(".campo");
         const campoObs = form.querySelector("[name='observaciones']").closest(".campo");
 
         const tipoPagoSelect = form.querySelector("[name='tipoPago']");
@@ -192,6 +199,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const contenedor = listaPagos;
         if (!pagos || pagos.length === 0) {
             contenedor.innerHTML = "<p>No se encontraron resultados.</p>";
+            actualizarTotal([]);
             return;
         }
 
@@ -229,6 +237,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         contenedor.innerHTML = "";
         contenedor.appendChild(tabla);
+        actualizarTotal(pagos);
+
     }
 
     // =======================
@@ -263,6 +273,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const hora = document.getElementById("filtroHoraPago").value;
         const tipoPago = document.getElementById("filtroTipoPago").value;
         const tienePenalizacion = document.getElementById("filtroPenalizacion").value;
+        const motivo = document.getElementById("filtroMotivo").value;
 
         const filtrados = window._pagos.filter(p => {
             return (
@@ -271,6 +282,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 (!fecha || p.fechaCita === fecha) &&
                 (!hora || normalizarHora(p.horaCita) === hora) &&
                 (!tipoPago || p.tipoPago === tipoPago) &&
+                (!motivo || p.motivo === motivo) &&
+
                 (tienePenalizacion === "" || (tienePenalizacion === "true") === Boolean(p.penalizacion))
             );
         });
@@ -286,7 +299,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("filtroFechaPago"),
         document.getElementById("filtroHoraPago"),
         document.getElementById("filtroTipoPago"),
-        document.getElementById("filtroPenalizacion")
+        document.getElementById("filtroPenalizacion"),
+        document.getElementById("filtroMotivo")
+
     ];
     filtros.forEach(f => f.addEventListener("change", aplicarFiltrosPagos));
 
@@ -299,3 +314,94 @@ document.addEventListener("DOMContentLoaded", async () => {
         renderTablaPagos(window._pagos);
     });
 });
+// ====================================
+// 📄 MODAL DE REPORTE (NUEVO DISEÑO)
+// ====================================
+const modalFormato = document.getElementById("modalFormato");
+const btnReporte = document.getElementById("btnReportePagos"); // ← CORREGIDO
+
+const btnPdf = document.getElementById("btnPdf");
+const btnExcel = document.getElementById("btnExcel");
+const btnCerrarModal = document.getElementById("btnCerrarModal");
+
+// Abrir modal
+btnReporte.addEventListener("click", () => {
+    modalFormato.classList.remove("oculto");
+});
+
+// Cerrar modal
+btnCerrarModal.addEventListener("click", () => {
+    modalFormato.classList.add("oculto");
+});
+
+// Exportar PDF
+btnPdf.addEventListener("click", () => {
+    generarReportePagosPDF(window._pagosFiltrados);
+    modalFormato.classList.add("oculto");
+});
+
+// Exportar Excel
+btnExcel.addEventListener("click", () => {
+    generarReportePagosExcel(window._pagosFiltrados);
+    modalFormato.classList.add("oculto");
+});
+// Cerrar modal haciendo clic fuera del contenido
+window.addEventListener("click", (e) => {
+    if (e.target === modalFormato) {
+        modalFormato.classList.add("oculto");
+    }
+});
+function generarReportePagosPDF(data) {
+    if (!data || data.length === 0) {
+        alert("No hay datos para generar el reporte.");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.text("Reporte de Pagos", 14, 15);
+
+    const tabla = data.map(p => [
+        p.nombrePaciente || "-",
+        p.nombrePsicologo || "-",
+        "$" + (p.montoTotal || 0),
+        p.penalizacion ? "$" + p.penalizacion : "-",
+        (p.fechaCita || "") + " " + (p.horaCita || ""),
+        p.motivo || "-",
+        p.tipoPago || "-",
+        p.observaciones || "-"
+    ]);
+
+    doc.autoTable({
+        head: [["Paciente","Psicólogo","Monto","Penalización","Fecha","Motivo","Tipo","Observaciones"]],
+        body: tabla,
+        startY: 20
+    });
+
+    doc.save("reporte_pagos.pdf");
+}
+function generarReportePagosExcel(data) {
+    if (!data || data.length === 0) {
+        alert("No hay datos para exportar.");
+        return;
+    }
+
+    const hoja = data.map(p => ({
+        Paciente: p.nombrePaciente || "-",
+        Psicólogo: p.nombrePsicologo || "-",
+        Monto: p.montoTotal || 0,
+        Penalización: p.penalizacion || 0,
+        Fecha: p.fechaCita || "",
+        Hora: p.horaCita || "",
+        Motivo: p.motivo || "-",
+        TipoPago: p.tipoPago || "-",
+        Observaciones: p.observaciones || "-"
+    }));
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(hoja);
+
+    XLSX.utils.book_append_sheet(wb, ws, "Pagos");
+    XLSX.writeFile(wb, "reporte_pagos.xlsx");
+}
