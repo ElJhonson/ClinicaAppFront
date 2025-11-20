@@ -374,7 +374,7 @@ function generarReportePagosPDF(data) {
     ]);
 
     doc.autoTable({
-        head: [["Paciente","Psicólogo","Monto","Penalización","Fecha","Motivo","Tipo","Observaciones"]],
+        head: [["Paciente", "Psicólogo", "Monto", "Penalización", "Fecha", "Motivo", "Tipo", "Observaciones"]],
         body: tabla,
         startY: 20
     });
