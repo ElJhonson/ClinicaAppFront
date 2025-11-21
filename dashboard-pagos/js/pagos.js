@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const campoTipoPago = form.querySelector("[name='tipoPago']").closest(".campo");
         const campoPenalizacion = form.querySelector("[name='penalizacion']").closest(".campo");
         const campoMonto = form.querySelector("[name='montoTotal']").closest(".campo");
-        const campoMotivo = form.querySelector("[name='m    otivo']").closest(".campo");
+        const campoMotivo = form.querySelector("[name='motivo']").closest(".campo");
         const campoObs = form.querySelector("[name='observaciones']").closest(".campo");
 
         const tipoPagoSelect = form.querySelector("[name='tipoPago']");
