@@ -350,4 +350,22 @@ body {
   margin: 20px auto 0 auto;
 }
 
+.paginacion {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 10px;
+}
 
+.paginacion button {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.paginacion button.active-page {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}

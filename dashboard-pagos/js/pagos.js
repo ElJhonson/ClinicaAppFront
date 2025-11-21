@@ -18,6 +18,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const idCita = urlParams.get("idCita");
     const modo = (urlParams.get("modo") || "registro").toLowerCase();
+    let paginaActual = 1;
+    const pagosPorPagina = 10;
+
+    function obtenerPagosPagina(pagos, pagina, porPagina) {
+        const inicio = (pagina - 1) * porPagina;
+        return pagos.slice(inicio, inicio + porPagina);
+    }
+
+
 
     // =======================
     // 🧩 ELEMENTOS DOM
@@ -196,50 +205,98 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 📊 Renderizar tabla de pagos
     // =======================
     function renderTablaPagos(pagos) {
-        const contenedor = listaPagos;
+        const cont = listaPagos;
+
         if (!pagos || pagos.length === 0) {
-            contenedor.innerHTML = "<p>No se encontraron resultados.</p>";
+            cont.innerHTML = "<p>No se encontraron resultados.</p>";
             actualizarTotal([]);
+            renderPaginacion(0);
             return;
         }
+
+        const paginaDatos = obtenerPagosPagina(pagos, paginaActual, pagosPorPagina);
 
         const tabla = document.createElement("table");
         tabla.classList.add("styled-table");
 
         tabla.innerHTML = `
-            <thead>
+        <thead>
+            <tr>
+                <th>Paciente</th>
+                <th>Psicólogo</th>
+                <th>Monto</th>
+                <th>Penalización</th>
+                <th>Fecha y Hora</th>
+                <th>Motivo</th>
+                <th>Tipo de Pago</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${paginaDatos.map(p => `
                 <tr>
-                    <th>Paciente</th>
-                    <th>Psicólogo</th>
-                    <th>Monto</th>
-                    <th>Penalización</th>
-                    <th>Fecha y Hora</th>
-                    <th>Motivo</th>
-                    <th>Tipo de Pago</th>
-                    <th>Observaciones</th>
+                    <td>${p.nombrePaciente || "-"}</td>
+                    <td>${p.nombrePsicologo || "-"}</td>
+                    <td>$${p.montoTotal || "-"}</td>
+                    <td>${p.penalizacion ? "$" + p.penalizacion : "-"}</td>
+                    <td>${p.fechaCita || ""} ${p.horaCita || ""}</td>
+                    <td>${p.motivo || "-"}</td>
+                    <td>${formatearTexto(p.tipoPago)}</td>
+                    <td>${p.observaciones || "-"}</td>
                 </tr>
-            </thead>
-            <tbody>
-                ${pagos.map(p => `
-                    <tr>
-                        <td>${p.nombrePaciente || "-"}</td>
-                        <td>${p.nombrePsicologo || "-"}</td>
-                        <td>$${p.montoTotal || "-"}</td>
-                        <td>${p.penalizacion ? "$" + p.penalizacion : "-"}</td>
-                        <td>${p.fechaCita || ""} ${p.horaCita || ""}</td>
-                        <td>${p.motivo || "-"}</td>
-                        <td>${formatearTexto(p.tipoPago)}</td>
-                        <td>${p.observaciones || "-"}</td>
-                    </tr>
-                `).join("")}
-            </tbody>
-        `;
+            `).join("")}
+        </tbody>
+    `;
 
-        contenedor.innerHTML = "";
-        contenedor.appendChild(tabla);
+        cont.innerHTML = "";
+        cont.appendChild(tabla);
+
         actualizarTotal(pagos);
-
+        renderPaginacion(pagos.length);
     }
+
+
+    function renderPaginacion(totalPagos) {
+        const contenedor = document.getElementById("paginacionPagos");
+        contenedor.innerHTML = "";
+
+        const totalPaginas = Math.ceil(totalPagos / pagosPorPagina);
+
+        if (totalPaginas <= 1) return; // No dibujar paginación si no es necesaria
+
+        // Botón anterior
+        const btnPrev = document.createElement("button");
+        btnPrev.textContent = "Anterior";
+        btnPrev.disabled = paginaActual === 1;
+        btnPrev.addEventListener("click", () => {
+            paginaActual--;
+            renderTablaPagos(window._pagosFiltrados);
+        });
+        contenedor.appendChild(btnPrev);
+
+        // Números
+        for (let i = 1; i <= totalPaginas; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            if (i === paginaActual) btn.classList.add("active-page");
+            btn.addEventListener("click", () => {
+                paginaActual = i;
+                renderTablaPagos(window._pagosFiltrados);
+            });
+            contenedor.appendChild(btn);
+        }
+
+        // Botón siguiente
+        const btnNext = document.createElement("button");
+        btnNext.textContent = "Siguiente";
+        btnNext.disabled = paginaActual === totalPaginas;
+        btnNext.addEventListener("click", () => {
+            paginaActual++;
+            renderTablaPagos(window._pagosFiltrados);
+        });
+        contenedor.appendChild(btnNext);
+    }
+
 
     // =======================
     // 🔄 Cargar pagos
@@ -255,6 +312,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (verTodos) {
             window._pagos = datos;
             window._pagosFiltrados = datos;
+            paginaActual = 1;
+
         }
 
         renderTablaPagos(datos);
@@ -289,7 +348,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         window._pagosFiltrados = filtrados;
+        paginaActual = 1;
         renderTablaPagos(filtrados);
+
     }
 
     // Filtros automáticos al cambiar cualquier select/input
@@ -304,6 +365,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     ];
     filtros.forEach(f => f.addEventListener("change", aplicarFiltrosPagos));
+    paginaActual = 1;
+
 
     // =======================
     // 🔄 Botón Restablecer filtros
@@ -312,6 +375,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         filtros.forEach(f => f.value = "");
         window._pagosFiltrados = [...window._pagos];
         renderTablaPagos(window._pagos);
+        paginaActual = 1;
+        renderTablaPagos(window._pagos);
+
     });
 });
 // ====================================
@@ -404,4 +470,40 @@ function generarReportePagosExcel(data) {
 
     XLSX.utils.book_append_sheet(wb, ws, "Pagos");
     XLSX.writeFile(wb, "reporte_pagos.xlsx");
+}
+function obtenerPagosPagina(lista, pagina, porPagina) {
+    const inicio = (pagina - 1) * porPagina;
+    return lista.slice(inicio, inicio + porPagina);
+}
+function renderPaginacion(totalPagos) {
+    const cont = document.getElementById("paginacionPagos");
+    const totalPaginas = Math.ceil(totalPagos / pagosPorPagina);
+
+    if (totalPaginas <= 1) {
+        cont.innerHTML = "";
+        return;
+    }
+
+    let html = `
+        <button class="pag-btn" data-pag="prev">◀</button>
+        <span> Página ${paginaActual} de ${totalPaginas} </span>
+        <button class="pag-btn" data-pag="next">▶</button>
+    `;
+
+    cont.innerHTML = html;
+
+    // Eventos
+    cont.querySelector("[data-pag='prev']").onclick = () => {
+        if (paginaActual > 1) {
+            paginaActual--;
+            actualizarTablaConPaginacion();
+        }
+    };
+
+    cont.querySelector("[data-pag='next']").onclick = () => {
+        if (paginaActual < totalPaginas) {
+            paginaActual++;
+            actualizarTablaConPaginacion();
+        }
+    };
 }

@@ -593,6 +593,53 @@ textarea {
     background-color: #b3b3b3;
 }
 
+/* ===== PAGINACIÓN ===== */
+.paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 25px 0;
+    flex-wrap: wrap;
+}
+
+.paginacion button {
+    padding: 8px 14px;
+    border: none;
+    background-color: #e9ecef;
+    color: #333;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.25s ease;
+    min-width: 40px;
+    font-weight: 500;
+}
+
+.paginacion button:hover {
+    background-color: #d0d4d8;
+    transform: translateY(-1px);
+}
+
+.paginacion button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Página activa */
+.paginacion .active-page {
+    background-color: #4b79ff;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 3px 8px rgba(75, 121, 255, 0.4);
+}
+
+.paginacion .active-page:hover {
+    background-color: #3b63d6;
+}
+
+
 /* Responsive: filtros apilados en móviles */
 @media (max-width: 768px) {
   .filtros-container {
