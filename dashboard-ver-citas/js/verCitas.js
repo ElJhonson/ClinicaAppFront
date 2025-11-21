@@ -6,6 +6,10 @@ function formatearTexto(texto) {
     .replace(/\b\w/g, l => l.toUpperCase());
 }
 
+window._paginaActual = 1;
+window._itemsPorPagina = 10; 
+
+
 document.addEventListener("DOMContentLoaded", async () => {
   const contenedor = document.getElementById("contenedorTabla");
   const token = localStorage.getItem("accessToken");
@@ -159,6 +163,23 @@ function renderizarTabla(citas) {
     return;
   }
 
+  // --- PAGINACIÓN ---
+  const totalItems = citas.length;
+  const totalPaginas = Math.ceil(totalItems / window._itemsPorPagina);
+
+  if (window._paginaActual > totalPaginas) {
+    window._paginaActual = totalPaginas;
+  }
+  if (window._paginaActual < 1) {
+    window._paginaActual = 1;
+  }
+
+  const inicio = (window._paginaActual - 1) * window._itemsPorPagina;
+  const fin = inicio + window._itemsPorPagina;
+
+  const citasPagina = citas.slice(inicio, fin);
+
+  // --- TABLA ---
   const tabla = document.createElement("table");
   tabla.classList.add("styled-table");
 
@@ -175,7 +196,7 @@ function renderizarTabla(citas) {
       </tr>
     </thead>
     <tbody>
-      ${citas.map(c => `
+      ${citasPagina.map(c => `
         <tr>
           <td>${c.fecha || "-"}</td>
           <td>${c.hora || "-"}</td>
@@ -194,12 +215,54 @@ function renderizarTabla(citas) {
   contenedor.innerHTML = "";
   contenedor.appendChild(tabla);
 
+  // COLORES
   aplicarColoresEstado();
+
+  // PAGINACIÓN
+  renderizarPaginacion(totalPaginas);
+}
+
+function renderizarPaginacion(totalPaginas) {
+    const contenedor = document.getElementById("contenedorTabla");
+
+    // Eliminar cualquier paginación previa
+    const vieja = contenedor.querySelector(".paginacion");
+    if (vieja) vieja.remove();
+
+    // 🔥 Si solo hay UNA página → NO dibujar paginación
+    if (totalPaginas <= 1) return;
+
+    const paginacion = document.createElement("div");
+    paginacion.classList.add("paginacion");
+
+    paginacion.innerHTML = `
+        <button id="btnPrev" ${window._paginaActual === 1 ? "disabled" : ""}>Anterior</button>
+        <span>Página ${window._paginaActual} de ${totalPaginas}</span>
+        <button id="btnNext" ${window._paginaActual === totalPaginas ? "disabled" : ""}>Siguiente</button>
+    `;
+
+    contenedor.appendChild(paginacion);
+
+    // Eventos de paginación
+    document.getElementById("btnPrev").onclick = () => {
+        if (window._paginaActual > 1) {
+            window._paginaActual--;
+            renderizarTabla(window._citasFiltradas ?? window._citas);
+        }
+    };
+
+    document.getElementById("btnNext").onclick = () => {
+        if (window._paginaActual < totalPaginas) {
+            window._paginaActual++;
+            renderizarTabla(window._citasFiltradas ?? window._citas);
+        }
+    };
 }
 
 
+
 /* ===========================
-   🎨 Colorear celdas de estado
+Colorear celdas de estado
 =========================== */
 function aplicarColoresEstado() {
   document.querySelectorAll(".estado").forEach(td => {
@@ -233,7 +296,7 @@ function aplicarColoresEstado() {
 
 
 /* ===========================
-   📊 Reporte temporal
+Reporte temporal
 =========================== */
 function generarReporte(citas) {
   if (!citas || citas.length === 0) {
