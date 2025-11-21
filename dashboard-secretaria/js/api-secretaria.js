@@ -174,6 +174,41 @@ export async function registrarOActualizarCita(e) {
                 return;
             }
 
+            // --- REAGENDADA ---
+            if (nuevoEstado === "REAGENDADA" && nuevoEstado !== estadoOriginal) {
+                const confirmar = await Swal.fire({
+                    icon: "info",
+                    title: "Cita reagendada",
+                    text: "Se marcará la cita como REAGENDADA y podrás registrar a otro paciente.",
+                    showCancelButton: true,
+                    confirmButtonText: "Aceptar",
+                    cancelButtonText: "Cancelar",
+                });
+
+                if (!confirmar.isConfirmed) return;
+
+                await fetch(`${BASE_URL}/citas/${idCita}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token
+                    },
+                    body: JSON.stringify({ ...cita, estado: nuevoEstado })
+                });
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Cita marcada como REAGENDADA",
+                    text: "Ahora puedes registrar un nuevo paciente en este horario.",
+                    confirmButtonText: "Registrar paciente"
+                }).then(() => {
+                    window.location.href = `../dashboar-paciente/paciente.html`;
+                });
+
+                return;
+            }
+
+
             // --- NO_ASISTIO ---
             if (nuevoEstado === "NO_ASISTIO" && nuevoEstado !== estadoOriginal) {
                 const confirmar = await Swal.fire({
