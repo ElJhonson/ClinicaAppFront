@@ -43,7 +43,9 @@ export async function cargarCitas(token, fechaSeleccionada) {
         if (!response.ok) throw new Error("Error cargando citas");
 
         const citas = await response.json();
-        const citasDelDia = citas.filter(c => c.fecha === fechaFiltro);
+        const citasDelDia = citas.filter(c =>
+            c.fecha === fechaFiltro && c.estado !== "REAGENDADA"
+        );
 
         generarTablaHorarios();
 
@@ -176,33 +178,19 @@ export async function registrarOActualizarCita(e) {
 
             // --- REAGENDADA ---
             if (nuevoEstado === "REAGENDADA" && nuevoEstado !== estadoOriginal) {
-                const confirmar = await Swal.fire({
-                    icon: "info",
-                    title: "Cita reagendada",
-                    text: "Se marcará la cita como REAGENDADA y podrás registrar a otro paciente.",
-                    showCancelButton: true,
-                    confirmButtonText: "Aceptar",
-                    cancelButtonText: "Cancelar",
-                });
-
-                if (!confirmar.isConfirmed) return;
-
-                await fetch(`${BASE_URL}/citas/${idCita}`, {
+                await fetch(`${BASE_URL}/citas/${idCita}/estado?estado=${nuevoEstado}`, {
                     method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + token
-                    },
-                    body: JSON.stringify({ ...cita, estado: nuevoEstado })
+                    headers: { "Authorization": "Bearer " + token }
                 });
 
                 Swal.fire({
                     icon: "success",
                     title: "Cita marcada como REAGENDADA",
-                    text: "Ahora puedes registrar un nuevo paciente en este horario.",
-                    confirmButtonText: "Registrar paciente"
-                }).then(() => {
-                    window.location.href = `../dashboar-paciente/paciente.html`;
+                    text: "El espacio ha quedado libre y la cita se guardó en historial.",
+                    confirmButtonText: "Aceptar"
+                }).then(async () => {
+                    document.getElementById("modalRegistrarCita").style.display = "none";
+                    await cargarCitas(token, cita.fecha);
                 });
 
                 return;
