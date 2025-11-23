@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Psicólogo</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/home-psicologo.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <h2 class="logo">Centro de Psicoterapia Cognitivo Conductual Autlán</h2>
+        <nav class="nav-links">
+            <span id="nombrePsicologo" class="bienvenido"></span>
+            <button id="logoutBtn" class="logout">Cerrar sesión</button>
+        </nav>
+    </header>
+
+    <!-- FILTRO DE FECHA -->
+    <section class="filtros">
+        <label for="fechaFiltro">Ver citas del:</label>
+
+        <div class="grupo-fecha">
+            <button id="btnAnterior" class="nav-dia">◀</button>
+            <input type="date" id="fechaFiltro">
+            <button id="btnSiguiente" class="nav-dia">▶</button>
+            <button id="btnHoy" class="hoy">Hoy</button>
+        </div>
+    </section>
+
+
+    <section class="contenido">
+        <h2 class="titulo">Mis Citas</h2>
+        <p class="subtitulo">Citas del día seleccionado</p>
+
+        <div id="contenedorCitas" class="grid-citas"></div>
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="./js/home-psicologo.js"></script>
+</body>
+
+</html>
