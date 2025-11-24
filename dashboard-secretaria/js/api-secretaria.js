@@ -315,9 +315,14 @@ export async function registrarOActualizarCita(e) {
         await cargarCitas(token, fechaRecargar);
 
     } catch (err) {
-        console.error(err);
-        alert("⚠️ No se pudo conectar con el servidor");
-    }
+    console.error(err);
+    Swal.fire({
+        icon: "error",
+        title: "Error de conexión",
+        text: "No se pudo conectar con el servidor. Verifica tu red o intenta más tarde."
+    });
+}
+
 }
 
 // ----- Helper -----

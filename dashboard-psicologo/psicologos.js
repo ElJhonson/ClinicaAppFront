@@ -160,6 +160,8 @@ async function obtenerPsicologos() {
         <td>${p.telefono}</td>
         <td>
           <button class="btnEditar" data-id="${p.id}">Editar</button>
+          <button class="btnEliminar" data-id="${p.id}">Eliminar</button>
+
         </td>
       `;
       tbody.appendChild(row);
@@ -179,6 +181,42 @@ async function obtenerPsicologos() {
         modalEditar.style.display = "flex";
       });
     });
+
+    document.querySelectorAll(".btnEliminar").forEach(btn => {
+    btn.addEventListener("click", async e => {
+        const id = e.target.dataset.id;
+        const token = localStorage.getItem("accessToken");
+
+        Swal.fire({
+            title: "¿Desactivar psicólogo?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sí, desactivar",
+            cancelButtonText: "Cancelar"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const res = await fetch(`${API_URL}/${id}/desactivar`, {
+                        method: "PUT",
+                        headers: {
+                            "Authorization": "Bearer " + token
+                        }
+                    });
+
+                    if (!res.ok) throw new Error("Error al desactivar");
+
+                    Swal.fire("Desactivado", "El psicólogo fue desactivado", "success");
+                    obtenerPsicologos(token);
+
+                } catch (e) {
+                    console.error(e);
+                    Swal.fire("Error", "No se pudo desactivar", "error");
+                }
+            }
+        });
+    });
+});
+
 
   } catch (error) {
     console.error(error);

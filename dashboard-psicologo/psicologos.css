@@ -222,3 +222,15 @@ button {
 .styled-table th, .styled-table td {
   word-wrap: break-word; /* corta palabras largas */
 }
+.btnEliminar {
+    background-color: #e74c3c;
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btnEliminar:hover {
+    background-color: #c0392b;
+}

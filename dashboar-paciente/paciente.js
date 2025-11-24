@@ -132,9 +132,10 @@ async function obtenerPacientes(token) {
                 <td>${p.contacto}</td>
                 <td>${p.parentesco}</td>
                 <td>${p.telefonoCp}</td>
-                <td>${p.estado ?? "ACTIVO"}</td>
                 <td>
                     <button class="btnEditar" data-clave="${p.clave}">Editar</button>
+                    <button class="btnEliminar" data-clave="${p.clave}">Eliminar</button>
+
                 </td>
             `;
             tbody.appendChild(row);
@@ -177,7 +178,55 @@ function agregarBotonesEditarPacientes() {
             modalPaciente.style.display = "flex";
         });
     });
+
+    // ===============================
+    // 🔥 BOTÓN ELIMINAR / DESACTIVAR
+    // ===============================
+    document.querySelectorAll(".btnEliminar").forEach(btn => {
+        btn.addEventListener("click", async e => {
+            const clave = e.target.dataset.clave;
+            const token = localStorage.getItem("accessToken");
+
+            const confirm = await Swal.fire({
+                icon: "warning",
+                title: "¿Desactivar paciente?",
+                text: "El paciente no podrá ser usado en nuevas citas.",
+                showCancelButton: true,
+                confirmButtonText: "Sí, desactivar",
+                cancelButtonText: "Cancelar"
+            });
+
+            if (!confirm.isConfirmed) return;
+
+            try {
+                const response = await fetch(`${API_URL}/${clave}/desactivar`, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+
+                if (!response.ok) throw new Error("Error al desactivar");
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Paciente desactivado",
+                    text: "El paciente fue marcado como INACTIVO."
+                });
+
+                await obtenerPacientes(token);
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "No se pudo desactivar el paciente."
+                });
+            }
+        });
+    });
 }
+
 
 btnCerrarModalPaciente.addEventListener("click", () => {
     modalPaciente.style.display = "none";

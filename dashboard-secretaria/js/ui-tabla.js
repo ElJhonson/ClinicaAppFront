@@ -174,8 +174,14 @@ export function inicializarDelegacionClick() {
 
     } catch (err) {
       console.error(err);
-      alert("No se pudieron cargar psicólogos o pacientes");
+      Swal.fire({
+        icon: "error",
+        title: "Error de conexión",
+        text: "⚠️ No se pudo conectar con el servidor. Intenta nuevamente.",
+        confirmButtonColor: "#d33"
+      });
     }
+
   });
 
 }
