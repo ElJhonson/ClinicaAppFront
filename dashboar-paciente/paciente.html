@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 </head>
+
 <body>
   <header>
     <h1>Gestión de Pacientes</h1>
@@ -19,9 +21,6 @@
     <section class="form-container">
       <h2>Registrar nuevo paciente</h2>
       <form id="formPaciente">
-
-        <label>Clave:</label>
-        <input type="text" id="clave" required>
 
         <label>Nombre completo:</label>
         <input type="text" id="nombre" required>
@@ -58,7 +57,6 @@
       <table id="tablaPacientes" class="styled-table">
         <thead>
           <tr>
-            <th>Clave</th>
             <th>Nombre</th>
             <th>Fecha Nac.</th>
             <th>Sexo</th>
@@ -77,47 +75,48 @@
     </section>
   </main>
 
-<!-- Modal para editar paciente -->
-<div id="modalEditarPaciente" class="modal">
-  <div class="modal-content">
-    <h3>Editar Paciente</h3>
-    <form id="formEditarPaciente">
-      <input type="text" id="editClave">
+  <!-- Modal para editar paciente -->
+  <div id="modalEditarPaciente" class="modal">
+    <div class="modal-content">
+      <h3>Editar Paciente</h3>
+      <form id="formEditarPaciente">
 
-      <label>Nombre completo:</label>
-      <input type="text" id="editNombre" required>
+        <label>Nombre completo:</label>
+        <input type="text" id="editNombre" required>
 
-      <label>Fecha de nacimiento:</label>
-      <input type="date" id="editFechaNac" required>
+        <label>Fecha de nacimiento:</label>
+        <input type="date" id="editFechaNac" required>
 
-      <label>Sexo:</label>
-      <select id="editSexo" required>
-        <option value="MASCULINO">Masculino</option>
-        <option value="FEMENINO">Femenino</option>
-      </select>
+        <label>Sexo:</label>
+        <select id="editSexo" required>
+          <option value="MASCULINO">Masculino</option>
+          <option value="FEMENINO">Femenino</option>
+        </select>
 
-      <label>Teléfono:</label>
-      <input type="tel" id="editTelefono" required>
+        <label>Teléfono:</label>
+        <input type="tel" id="editTelefono" required>
 
-      <label>Contacto de emergencia:</label>
-      <input type="text" id="editContacto" required>
+        <label>Contacto de emergencia:</label>
+        <input type="text" id="editContacto" required>
 
-      <label>Parentesco:</label>
-      <input type="text" id="editParentesco" required>
+        <label>Parentesco:</label>
+        <input type="text" id="editParentesco" required>
 
-      <label>Teléfono del contacto:</label>
-      <input type="tel" id="editTelefonoC" required>
+        <label>Teléfono del contacto:</label>
+        <input type="tel" id="editTelefonoC" required>
 
-      <div class="modal-buttons">
-        <button type="submit" class="btn-guardar">Guardar</button>
-        <button type="button" id="cerrarModalPaciente" class="btn-cancelar">Cancelar</button>
-      </div>
-    </form>
+        <div class="modal-buttons">
+          <button type="submit" class="btn-guardar">Guardar</button>
+          <button type="button" id="cerrarModalPaciente" class="btn-cancelar">Cancelar</button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script src="paciente.js"></script>
 </body>
+
 </html>

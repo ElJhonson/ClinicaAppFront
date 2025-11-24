@@ -22,7 +22,6 @@ form.addEventListener("submit", async (e) => {
     nombre: document.getElementById("nombre").value,
     email: document.getElementById("email").value,
     password: document.getElementById("password").value,
-    comision: document.getElementById("comision").value,
     telefono: document.getElementById("telefono").value,
   };
 
@@ -37,16 +36,32 @@ form.addEventListener("submit", async (e) => {
     });
 
     if (response.ok) {
-      alert("Psicólogo registrado correctamente");
+      Swal.fire({
+        icon: "success",
+        title: "Registrado",
+        text: "Psicólogo registrado correctamente"
+      });
+
       form.reset();
       obtenerPsicologos();
     } else {
       const text = await response.text();
       console.error("Registro falló:", text);
-      alert("Error al registrar el psicólogo");
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Error al registrar el psicólogo"
+      });
     }
   } catch (error) {
     console.error("Error:", error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Error inesperado",
+      text: "Hubo un problema de conexión"
+    });
   }
 });
 
@@ -59,7 +74,6 @@ formEditar.addEventListener("submit", async e => {
   const psicologoActualizado = {
     nombre: document.getElementById("editNombre").value,
     email: document.getElementById("editEmail").value,
-    comision: document.getElementById("editComision").value,
     telefono: document.getElementById("editTelefono").value
   };
 
@@ -75,16 +89,26 @@ formEditar.addEventListener("submit", async e => {
 
     if (!res.ok) {
       const txt = await res.text();
-       console.error("Respuesta del backend:", txt);
+      console.error("Respuesta del backend:", txt);
       throw new Error(txt || "Error al actualizar el psicólogo");
     }
 
-    alert("✅ Psicólogo actualizado correctamente");
-    cerrarModal(); // oculta el modal
-    obtenerPsicologos(); // refrescar tabla
+    Swal.fire({
+      icon: "success",
+      title: "Actualizado",
+      text: "Psicólogo actualizado correctamente"
+    });
+
+    cerrarModal();
+    obtenerPsicologos();
   } catch (err) {
     console.error(err);
-    alert("❌ " + err.message);
+
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: err.message
+    });
   }
 });
 
@@ -109,7 +133,6 @@ window.addEventListener("keydown", (e) => {
 
 function cerrarModal() {
   modalEditar.style.display = "none";
-  // opcional: limpiar campos del modal
   formEditar.reset();
   document.getElementById("editId").value = "";
 }
@@ -134,7 +157,6 @@ async function obtenerPsicologos() {
       row.innerHTML = `
         <td>${p.nombre}</td>
         <td>${p.email}</td>
-        <td>${p.comision}</td>
         <td>${p.telefono}</td>
         <td>
           <button class="btnEditar" data-id="${p.id}">Editar</button>
@@ -143,7 +165,7 @@ async function obtenerPsicologos() {
       tbody.appendChild(row);
     });
 
-    // Asignar eventos de edición después de crear la tabla
+    // Asignar eventos de edición
     document.querySelectorAll(".btnEditar").forEach(btn => {
       btn.addEventListener("click", e => {
         const id = e.target.dataset.id;
@@ -152,15 +174,19 @@ async function obtenerPsicologos() {
         document.getElementById("editId").value = psicologo.id;
         document.getElementById("editNombre").value = psicologo.nombre;
         document.getElementById("editEmail").value = psicologo.email;
-        document.getElementById("editComision").value = psicologo.comision;
         document.getElementById("editTelefono").value = psicologo.telefono;
 
-        // Mostrar el modal (usa flex si tu CSS .modal usa display:flex)
         modalEditar.style.display = "flex";
       });
     });
 
   } catch (error) {
     console.error(error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "No se pudieron cargar los psicólogos"
+    });
   }
 }

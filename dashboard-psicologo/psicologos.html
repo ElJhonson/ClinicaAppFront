@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="psicologos.css">
 </head>
+
 <body>
   <header>
     <h1>Gestión de Psicólogos</h1>
@@ -28,9 +30,6 @@
         <label>Contraseña:</label>
         <input type="password" id="password" required>
 
-        <label>Comisión:</label>
-        <input type="number" id="comision" required>
-
         <label>Teléfono:</label>
         <input type="tel" id="telefono" required>
 
@@ -47,9 +46,8 @@
 
             <th>Nombre</th>
             <th>Email</th>
-            <th>Comisión</th>
             <th>Teléfono</th>
-             <th>Acciones</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -58,30 +56,30 @@
       </table>
     </section>
   </main>
-  
-<div id="modalEditar">
-  <div class="modal-content">
-    <h2>Editar Psicólogo</h2>
-    <form id="formEditarPsicologo">
-      <input type="hidden" id="editId">
-      <label>Nombre:</label>
-      <input type="text" id="editNombre" required>
-      <label>Email:</label>
-      <input type="email" id="editEmail" required>
-      <label>Comisión:</label>
-      <input type="text" id="editComision">
-      <label>Teléfono:</label>
-      <input type="text" id="editTelefono">
-      <div class="modal-buttons">
-        <button type="submit" class="btn-guardar">Guardar</button>
-        <button type="button" id="cerrarModal" class="btn-cancelar">Cancelar</button>
-      </div>
-    </form>
+
+  <div id="modalEditar">
+    <div class="modal-content">
+      <h2>Editar Psicólogo</h2>
+      <form id="formEditarPsicologo">
+        <input type="hidden" id="editId">
+        <label>Nombre:</label>
+        <input type="text" id="editNombre" required>
+        <label>Email:</label>
+        <input type="email" id="editEmail" required>
+        <label>Teléfono:</label>
+        <input type="text" id="editTelefono">
+        <div class="modal-buttons">
+          <button type="submit" class="btn-guardar">Guardar</button>
+          <button type="button" id="cerrarModal" class="btn-cancelar">Cancelar</button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script src="psicologos.js"></script>
 </body>
+
 </html>
